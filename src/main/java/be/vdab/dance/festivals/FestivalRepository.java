@@ -74,6 +74,7 @@ public class FestivalRepository {
                 .query(Festival.class)
                 .optional();
     }
+
     public long findAantal() {
         var sql = """
                 select count(*)
@@ -83,6 +84,7 @@ public class FestivalRepository {
                 .query(Long.class)
                 .single();
     }
+
     public void verhoogBudget(BigDecimal bedrag) {
         var sql = """
                 update festivals
@@ -91,5 +93,19 @@ public class FestivalRepository {
         jdbcClient.sql(sql)
                 .param(bedrag)
                 .update();
+    }
+
+    public void update(Festival festival) {
+        var sql = """
+                update festivals
+                set naam = ?, ticketsBeschikbaar = ?
+                where id = ?
+                """;
+        if (jdbcClient.sql(sql)
+                .params(festival.getNaam(), festival.getTicketsBeschikbaar(),
+                        festival.getId())
+                .update() == 0) {
+            throw new FestivalNietGevondenException(festival.getId());
+        }
     }
 }

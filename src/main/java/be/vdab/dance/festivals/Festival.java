@@ -6,7 +6,7 @@ public class Festival {
 
     private final long id;
     private final String naam;
-    private final long ticketsBeschikbaar;
+    private long ticketsBeschikbaar;
     private final BigDecimal reclameBudget;
 
     public Festival(long id, String naam, long ticketsBeschikbaar, BigDecimal reclameBudget) {
@@ -30,5 +30,15 @@ public class Festival {
 
     public BigDecimal getReclameBudget() {
         return reclameBudget;
+    }
+
+    public void boek(int tickets) {
+        if (tickets <= 0) {
+            throw new IllegalArgumentException();
+        }
+        if (tickets > ticketsBeschikbaar) {
+            throw new OnvoldoendeTicketsBeschikbaar();
+        }
+        ticketsBeschikbaar -= tickets;
     }
 }

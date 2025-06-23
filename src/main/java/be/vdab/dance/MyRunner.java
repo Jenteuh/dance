@@ -1,7 +1,6 @@
 package be.vdab.dance;
 
-import be.vdab.dance.festivals.FestivalNietGevondenException;
-import be.vdab.dance.festivals.FestivalService;
+import be.vdab.dance.festivals.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -9,22 +8,52 @@ import java.util.Scanner;
 
 @Component
 public class MyRunner implements CommandLineRunner {
-    private final FestivalService festivalService;
-    public MyRunner(FestivalService festivalService) {
-        this.festivalService = festivalService;
+
+//    private final FestivalService festivalService;
+    private final BoekingService boekingService;
+
+//    public MyRunner(FestivalService festivalService) {
+//        this.festivalService = festivalService;
+//    }
+
+    public MyRunner(BoekingService boekingService) {
+        this.boekingService = boekingService;
     }
+
     @Override
     public void run(String... args) {
 //        festivalService.findUitverkocht()
 //                .forEach(festival -> System.out.println(festival.getNaam()));
+
+        //Annuleer Festival
+//        var scanner = new Scanner(System.in);
+//        System.out.print("Festival id:");
+//        long id = scanner.nextLong();
+//        try {
+//            festivalService.annuleer(id);
+//            System.out.println("Festival geannuleerd.");
+//        } catch (FestivalNietGevondenException ex) {
+//            System.err.println("Festival " + ex.getId() + " niet gevonden.");
+//        }
+
+        //Boeking
         var scanner = new Scanner(System.in);
+        System.out.print("Naam:");
+        var naam = scanner.nextLine();
+        System.out.print("Aantal tickets:");
+        var aantalTickets = scanner.nextInt();
         System.out.print("Festival id:");
-        long id = scanner.nextLong();
+        var festivalId = scanner.nextInt();
         try {
-            festivalService.annuleer(id);
-            System.out.println("Festival geannuleerd.");
+            var boeking = new Boeking(0, naam, aantalTickets, festivalId);
+            boekingService.create(boeking);
+            System.out.println("Boeking ok");
+        } catch (IllegalArgumentException ex) {
+            System.err.println(ex.getMessage());
         } catch (FestivalNietGevondenException ex) {
             System.err.println("Festival " + ex.getId() + " niet gevonden.");
+        } catch (OnvoldoendeTicketsBeschikbaar ex) {
+            System.err.println("Onvoldoende tickets beschikbaar");
         }
     }
 }
