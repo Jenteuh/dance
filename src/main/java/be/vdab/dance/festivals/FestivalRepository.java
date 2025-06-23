@@ -51,7 +51,7 @@ public class FestivalRepository {
     public long create(Festival festival) {
         var sql = """
                     insert into festivals(naam, reclameBudget, ticketsBeschikbaar)
-                    values (?, ?)
+                    values (?, ?, ?)
         """;
         var keyHolder = new GeneratedKeyHolder();
         jdbcClient.sql(sql)
