@@ -63,5 +63,29 @@ class FestivalRepositoryTest {
         var aantalRecords = JdbcTestUtils.countRowsInTableWhere(jdbcClient, FESTIVALS_TABLE, "id = " + id);
         assertThat(aantalRecords).isOne();
     }
+
+    @Test
+    void findAndLockByIdMetEenBestaandeIdVindtEenFestival() {
+        assertThat(festivalRepository.findAndLockById(idVanTestFestival1()))
+                .hasValueSatisfying(festival ->
+                        assertThat(festival.getNaam()).isEqualTo("testFestival1"));
+    }
+
+    @Test
+    void findAndLockByIdMetEenOnbestaandeIdVindtGeenFestival() {
+        assertThat(festivalRepository.findAndLockById(Long.MAX_VALUE)).isEmpty();
+    }
+    @Test
+    void findAantalVindtHetJuisteAantalFestivals() {
+        var aantalRecords = JdbcTestUtils.countRowsInTable(jdbcClient, FESTIVALS_TABLE);
+        assertThat(festivalRepository.findAantal()).isEqualTo(aantalRecords);
+    }
+    @Test
+    void verhoogBudgetVerhoogtHetBudgetVanEenFestival() {
+        festivalRepository.verhoogBudget(BigDecimal.TEN);
+        var id = idVanTestFestival1();
+        var aantalRecords = JdbcTestUtils.countRowsInTableWhere(jdbcClient, FESTIVALS_TABLE, "reclameBudget = 2510 and id = " + id);
+        assertThat(aantalRecords).isOne();
+    }
 }
 

@@ -4,7 +4,9 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class FestivalRepository {
@@ -58,5 +60,36 @@ public class FestivalRepository {
                 .params(festival.getNaam(), festival.getReclameBudget(), festival.getTicketsBeschikbaar())
                 .update(keyHolder);
         return keyHolder.getKey().longValue();
+    }
+
+    public Optional<Festival> findAndLockById(long id) {
+        var sql = """
+                select id, naam, ticketsBeschikbaar, reclameBudget
+                from festivals
+                where id = ?
+                for update
+                """;
+        return jdbcClient.sql(sql)
+                .param(id)
+                .query(Festival.class)
+                .optional();
+    }
+    public long findAantal() {
+        var sql = """
+                select count(*)
+                from festivals
+                """;
+        return jdbcClient.sql(sql)
+                .query(Long.class)
+                .single();
+    }
+    public void verhoogBudget(BigDecimal bedrag) {
+        var sql = """
+                update festivals
+                set reclameBudget = reclameBudget + ?
+                """;
+        jdbcClient.sql(sql)
+                .param(bedrag)
+                .update();
     }
 }
