@@ -13,9 +13,10 @@ import java.math.BigDecimal;
 
 @JdbcTest
 @Import(FestivalRepository.class)
-@Sql("/festivals.sql")
+@Sql({"/festivals.sql", "/boekingen.sql"})
 class FestivalRepositoryTest {
     private static final String FESTIVALS_TABLE = "festivals";
+    private static final String BOEKINGEN_TABLE = "boekingen";
     private final FestivalRepository festivalRepository;
     private final JdbcClient jdbcClient;
 
@@ -106,6 +107,15 @@ class FestivalRepositoryTest {
         assertThatExceptionOfType(FestivalNietGevondenException.class).isThrownBy(
                 () -> festivalRepository.update(
                         new Festival(Long.MAX_VALUE, "test", 1, BigDecimal.TEN)));
+    }
+
+    @Test
+    void findAantalBoekingenPerFestivalVindtDeJuisteData(){
+        var resultaat = festivalRepository.findAantalBoekingenPerFestival();
+        assertThat(resultaat).extracting(AantalBoekingenPerFestival::id).isSorted();
+        var rij1 = resultaat.get(0);
+        assertThat(rij1.aantalBoekingen()).isEqualTo(JdbcTestUtils.countRowsInTableWhere(
+                jdbcClient, BOEKINGEN_TABLE, "festivalId = " + rij1.id()));
     }
 }
 

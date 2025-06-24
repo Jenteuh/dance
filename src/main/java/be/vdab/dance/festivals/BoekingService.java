@@ -3,6 +3,8 @@ package be.vdab.dance.festivals;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -29,5 +31,17 @@ public class BoekingService {
 
     public List<BoekingMetFestival> findBoekingenMetFestivals() {
         return boekingRepository.findBoekingenMetFestivals();
+    }
+
+    @Transactional
+    public void annuleer(long id) {
+        var boeking = boekingRepository.findAndLockById(id)
+                .orElseThrow(() -> new BoekingNietGevondenException(id));
+        var festival = festivalRepository.findAndLockById(boeking.getFestivalId())
+                .orElseThrow(() -> new FestivalNietGevondenException(boeking.getFestivalId()));
+        festival.annuleer(boeking.getAantalTickets());
+        boekingRepository.delete(boeking.getId());
+        festivalRepository.update(festival);
+
     }
 }

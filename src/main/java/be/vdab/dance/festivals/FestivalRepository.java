@@ -108,4 +108,16 @@ public class FestivalRepository {
             throw new FestivalNietGevondenException(festival.getId());
         }
     }
+
+    public List<AantalBoekingenPerFestival> findAantalBoekingenPerFestival() {
+        var sql = """
+                select festivals.id, festivals.naam, count(*) as aantalBoekingen
+                from festivals inner join boekingen
+                on festivals.id = boekingen.festivalId
+                group by festivals.id
+                """;
+        return jdbcClient.sql(sql)
+                .query(AantalBoekingenPerFestival.class)
+                .list();
+    }
 }

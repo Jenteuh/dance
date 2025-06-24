@@ -51,4 +51,30 @@ public class BoekingRepositoryTest {
         assertThat(rijMetTest1Boeking.aantalTickets()).isEqualTo(1);
         assertThat(rijMetTest1Boeking.festivalNaam()).isEqualTo("testFestival1");
     }
+
+    private long idVanTestBoeking1() {
+        return jdbcClient.sql("select id from boekingen where naam = 'test1'")
+                .query(Long.class)
+                .single();
+    }
+
+    @Test
+    void findAndLockByIdMetEenBestaandeIdVindtEenBoeking() {
+        assertThat(boekingRepository.findAndLockById(idVanTestBoeking1()))
+                .hasValueSatisfying(boeking ->
+                        assertThat(boeking.getNaam()).isEqualTo("test1"));
+    }
+
+    @Test
+    void findAndLockByIdMetEenOnbestaandeIdVindtGeenBoeking() {
+        assertThat(boekingRepository.findAndLockById(Long.MAX_VALUE)).isEmpty();
+    }
+
+    @Test
+    void deleteVerwijdertEenBoeking() {
+        var id = idVanTestBoeking1();
+        boekingRepository.delete(id);
+        var aantalRecords = JdbcTestUtils.countRowsInTableWhere(jdbcClient, BOEKINGEN_TABLE, "id = " + id);
+        assertThat(aantalRecords).isZero();
+    }
 }

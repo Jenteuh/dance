@@ -47,4 +47,8 @@ public class FestivalService {
                         2, RoundingMode.HALF_UP);
         festivalRepository.verhoogBudget(extraReclameBudgetPerFestival);
     }
+
+    public List<AantalBoekingenPerFestival> findAantalBoekingenPerFestival() {
+        return festivalRepository.findAantalBoekingenPerFestival();
+    }
 }

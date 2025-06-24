@@ -9,16 +9,16 @@ import java.util.Scanner;
 @Component
 public class MyRunner implements CommandLineRunner {
 
-//    private final FestivalService festivalService;
-    private final BoekingService boekingService;
+    private final FestivalService festivalService;
+//    private final BoekingService boekingService;
 
-//    public MyRunner(FestivalService festivalService) {
-//        this.festivalService = festivalService;
-//    }
-
-    public MyRunner(BoekingService boekingService) {
-        this.boekingService = boekingService;
+    public MyRunner(FestivalService festivalService) {
+        this.festivalService = festivalService;
     }
+
+//    public MyRunner(BoekingService boekingService) {
+//        this.boekingService = boekingService;
+//    }
 
     @Override
     public void run(String... args) {
@@ -57,6 +57,20 @@ public class MyRunner implements CommandLineRunner {
 //        }
 
         //Boekingen met Festivals
-        boekingService.findBoekingenMetFestivals().forEach(System.out::println);
+//        boekingService.findBoekingenMetFestivals().forEach(System.out::println);
+
+        //Boeking annuleren
+//        var scanner = new Scanner(System.in);
+//        System.out.print("Boeking id:");
+//        var id = scanner.nextLong();
+//        try {
+//            boekingService.annuleer(id);
+//            System.out.println("Boeking geannuleerd");
+//        } catch (BoekingNietGevondenException ex) {
+//            System.out.println("Boeking niet gevonden");
+//        }
+
+        //Aantal boekingen per festival
+        festivalService.findAantalBoekingenPerFestival().forEach(System.out::println);
     }
 }

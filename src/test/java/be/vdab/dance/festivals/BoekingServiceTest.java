@@ -50,4 +50,18 @@ public class BoekingServiceTest {
         assertThat(festival.getTicketsBeschikbaar()).isEqualTo(98);
     }
 
+    @Test
+    void annuleerVerwijdertEenBoekingEnWijzigtHetFestival(){
+        var boeking = new Boeking(0, "Jente", 2, 1);
+        var festival = new Festival(1, "testFestival", 98, BigDecimal.TEN);
+        when(festivalRepository.findAndLockById(1)).thenReturn(Optional.of(festival));
+        when(boekingRepository.findAndLockById(1)).thenReturn(Optional.of(boeking));
+        boekingService.annuleer(1);
+        assertThat(festival.getTicketsBeschikbaar()).isEqualTo(100);
+    }
+
+    @Test
+    void annuleerMetOnbestaandBoekingIdMislukt(){
+        assertThatExceptionOfType(BoekingNietGevondenException.class).isThrownBy(() -> boekingService.annuleer(1));
+    }
 }
