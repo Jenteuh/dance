@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
 @Import(BoekingRepository.class)
-@Sql("/festivals.sql")
+@Sql({"/festivals.sql", "/boekingen.sql"})
 public class BoekingRepositoryTest {
 
     private static final String BOEKINGEN_TABLE = "boekingen";
@@ -28,6 +28,7 @@ public class BoekingRepositoryTest {
                 .query(Long.class)
                 .single();
     }
+
     @Test
     void createVoegtEenBoekingToe() {
         var festivalId = idVanTestFestival1();
@@ -35,5 +36,19 @@ public class BoekingRepositoryTest {
         var aantalRecords = JdbcTestUtils.countRowsInTableWhere(jdbcClient, BOEKINGEN_TABLE,
                 "naam = 'test' and aantalTickets = 2 and festivalId = " + festivalId);
         assertThat(aantalRecords).isOne();
+    }
+
+    @Test
+    void findBoekingMetFestivalVindtDeJuisteData() {
+        var boekingen = boekingRepository.findBoekingenMetFestivals();
+        assertThat(boekingen).hasSize(JdbcTestUtils.countRowsInTable(jdbcClient, BOEKINGEN_TABLE))
+                .extracting(BoekingMetFestival::id).isSorted();
+        var rijMetTest1Boeking =
+                boekingen.stream()
+                        .filter(boeking -> boeking.boekingNaam().equals("test1"))
+                        .findFirst()
+                        .get();
+        assertThat(rijMetTest1Boeking.aantalTickets()).isEqualTo(1);
+        assertThat(rijMetTest1Boeking.festivalNaam()).isEqualTo("testFestival1");
     }
 }

@@ -3,6 +3,8 @@ package be.vdab.dance.festivals;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class BoekingRepository {
     private final JdbcClient jdbcClient;
@@ -18,5 +20,18 @@ public class BoekingRepository {
                 .params(boeking.getNaam(), boeking.getAantalTickets(),
                         boeking.getFestivalId())
                 .update();
+    }
+
+    public List<BoekingMetFestival> findBoekingenMetFestivals() {
+        var sql = """
+                select boekingen.id, boekingen.naam as boekingNaam,
+                festivals.naam as festivalNaam, aantalTickets
+                from boekingen inner join festivals
+                on boekingen.festivalId = festivals.id
+                order by boekingen.id;
+                """;
+        return jdbcClient.sql(sql)
+                .query(BoekingMetFestival.class)
+                .list();
     }
 }

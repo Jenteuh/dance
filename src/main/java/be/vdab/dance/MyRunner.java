@@ -37,23 +37,26 @@ public class MyRunner implements CommandLineRunner {
 //        }
 
         //Boeking
-        var scanner = new Scanner(System.in);
-        System.out.print("Naam:");
-        var naam = scanner.nextLine();
-        System.out.print("Aantal tickets:");
-        var aantalTickets = scanner.nextInt();
-        System.out.print("Festival id:");
-        var festivalId = scanner.nextInt();
-        try {
-            var boeking = new Boeking(0, naam, aantalTickets, festivalId);
-            boekingService.create(boeking);
-            System.out.println("Boeking ok");
-        } catch (IllegalArgumentException ex) {
-            System.err.println(ex.getMessage());
-        } catch (FestivalNietGevondenException ex) {
-            System.err.println("Festival " + ex.getId() + " niet gevonden.");
-        } catch (OnvoldoendeTicketsBeschikbaar ex) {
-            System.err.println("Onvoldoende tickets beschikbaar");
-        }
+//        var scanner = new Scanner(System.in);
+//        System.out.print("Naam:");
+//        var naam = scanner.nextLine();
+//        System.out.print("Aantal tickets:");
+//        var aantalTickets = scanner.nextInt();
+//        System.out.print("Festival id:");
+//        var festivalId = scanner.nextInt();
+//        try {
+//            var boeking = new Boeking(0, naam, aantalTickets, festivalId);
+//            boekingService.create(boeking);
+//            System.out.println("Boeking ok");
+//        } catch (IllegalArgumentException ex) {
+//            System.err.println(ex.getMessage());
+//        } catch (FestivalNietGevondenException ex) {
+//            System.err.println("Festival " + ex.getId() + " niet gevonden.");
+//        } catch (OnvoldoendeTicketsBeschikbaar ex) {
+//            System.err.println("Onvoldoende tickets beschikbaar");
+//        }
+
+        //Boekingen met Festivals
+        boekingService.findBoekingenMetFestivals().forEach(System.out::println);
     }
 }
